@@ -1,0 +1,79 @@
+{
+  "data_dir": "/Users/xy/projects/period-playground/cl",
+  "window_length": 1024,
+  "window_policy": "first eligible tokens",
+  "shuffles_per_document": 200,
+  "bootstrap_draws": 5000,
+  "seed": 20260806,
+  "preprocessing": "within-document z-score",
+  "spectrum": "normalized one-sided periodogram; DC excluded",
+  "bands": [
+    {
+      "label": "2--4",
+      "period_low": 2.0,
+      "period_high": 4.0
+    },
+    {
+      "label": "4--8",
+      "period_low": 4.0,
+      "period_high": 8.0
+    },
+    {
+      "label": "8--16",
+      "period_low": 8.0,
+      "period_high": 16.0
+    },
+    {
+      "label": "16--32",
+      "period_low": 16.0,
+      "period_high": 32.0
+    },
+    {
+      "label": "32--64",
+      "period_low": 32.0,
+      "period_high": 64.0
+    },
+    {
+      "label": "64--128",
+      "period_low": 64.0,
+      "period_high": 128.0
+    },
+    {
+      "label": "128--256",
+      "period_low": 128.0,
+      "period_high": 256.0
+    },
+    {
+      "label": "256--512",
+      "period_low": 256.0,
+      "period_high": 512.0
+    }
+  ],
+  "multiple_testing": "Benjamini-Hochberg across both corpora and all octave bands",
+  "corpora": {
+    "brown": {
+      "source_documents": 500,
+      "eligible_documents": 500,
+      "source_tokens": 1275568,
+      "minimum_length": 2234,
+      "median_length": 2539.5,
+      "maximum_length": 3542,
+      "omnibus_significant_documents": 72,
+      "omnibus_prevalence": 0.144,
+      "omnibus_prevalence_ci_low": 0.11593807411034973,
+      "omnibus_prevalence_ci_high": 0.17749045629827542
+    },
+    "wsj": {
+      "source_documents": 2312,
+      "eligible_documents": 475,
+      "source_tokens": 1309064,
+      "minimum_length": 24,
+      "median_length": 310.0,
+      "maximum_length": 4854,
+      "omnibus_significant_documents": 78,
+      "omnibus_prevalence": 0.16421052631578947,
+      "omnibus_prevalence_ci_low": 0.13361330250740233,
+      "omnibus_prevalence_ci_high": 0.20019542661633882
+    }
+  }
+}
