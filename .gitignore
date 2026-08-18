@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Large or machine-specific Gutenberg outputs.  The reproducible manifests and
+# code under gutenberg_benchmark/ remain tracked.
+logs/
+results/gutenberg_benchmark/

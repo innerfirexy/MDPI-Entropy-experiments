@@ -16,3 +16,10 @@ MPLCONFIGDIR=/tmp/mdpi-entropy-mpl \
 The default run uses the first 1024 tokens of every eligible document, 200 independent within-document shuffles, eight octave-spaced period bands, document-level paired effects, an empirical omnibus test, bootstrap confidence intervals, and Benjamini--Hochberg correction across the 16 corpus-by-band tests.
 
 Outputs are written to `results/pilot_brown_wsj/`.
+
+## Gutenberg spectrum validation
+
+The resumable Gutenberg pipeline, deterministic full-corpus manifest, fixed
+100/800-document benchmark manifests, and measured benchmark report are under
+`gutenberg_benchmark/`.  Large prepared arrays, token-level surprisal shards,
+logs, and diagnostic outputs are intentionally excluded from Git.
