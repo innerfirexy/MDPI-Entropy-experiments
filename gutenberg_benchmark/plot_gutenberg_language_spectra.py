@@ -100,8 +100,10 @@ def make_log_period_bins(length: int, count: int) -> tuple[np.ndarray, np.ndarra
     periods = length / fourier_k
     edges = np.linspace(math.log2(2.0), math.log2(float(length)), count + 1)
     assignments = np.clip(np.digitize(np.log2(periods), edges) - 1, 0, count - 1)
-    centers = 2.0 ** ((edges[:-1] + edges[1:]) / 2.0)
     bin_counts = np.bincount(assignments, minlength=count)
+    centers = np.full(count, np.nan)
+    for index in np.flatnonzero(bin_counts):
+        centers[index] = 2.0 ** np.mean(np.log2(periods[assignments == index]))
     return assignments, centers, bin_counts
 
 
@@ -256,6 +258,7 @@ def plot_language_facets(
     summaries: dict[str, dict[str, tuple[np.ndarray, np.ndarray, int]]],
     periods: np.ndarray,
     languages: list[str],
+    xscale: str = "log",
 ) -> None:
     import matplotlib.pyplot as plt
 
@@ -283,7 +286,14 @@ def plot_language_facets(
             f"{LANGUAGE_NAMES.get(language, language)}\n$n_{{L}}/n_{{Q}}={count_text}$",
             fontsize=9.5,
         )
-        axis.set_xscale("log", base=2)
+        if xscale == "log":
+            axis.set_xscale("log", base=2)
+        elif xscale == "linear":
+            axis.set_xscale("linear")
+            axis.set_xlim(0, 2048)
+            axis.set_xticks([0, 512, 1024, 1536, 2048])
+        else:
+            raise ValueError(f"Unsupported x-axis scale: {xscale}")
         axis.set_yscale("log")
         axis.grid(True, which="major", linewidth=0.35, alpha=0.3)
     for axis in axes[-1]:
@@ -434,6 +444,13 @@ def main() -> None:
             binned_summaries,
             binned_periods,
             languages,
+        )
+        plot_language_facets(
+            args.output_dir / "gutenberg_language_spectra_linear_x",
+            binned_summaries,
+            binned_periods,
+            languages,
+            xscale="linear",
         )
         first_model = args.models[0]
         plot_method_comparison(
