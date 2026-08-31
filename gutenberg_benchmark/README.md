@@ -43,6 +43,12 @@ Results      results/gutenberg_benchmark
    restart skips sealed chunks and completed rank shards.
 6. `analyze_gutenberg_benchmark.py` runs 200 within-window permutations and
    writes window, document, and language-band diagnostics.
+7. `plot_gutenberg_language_spectra.py` makes document-weighted mean spectra
+   for the ten focal languages.  It averages the three windows within each
+   document before language aggregation and writes both exact Fourier-bin and
+   fast log-period-bin summaries.  The latter is the recommended publication
+   curve; a separate diagnostic compares it with Savitzky--Golay and smoothing
+   spline alternatives without fitting a GAM to millions of raw observations.
 
 Each score rank writes one NPZ shard and one JSON summary.  Document IDs and
 all window alignment metadata are retained so runs can be audited or resumed.
@@ -89,3 +95,17 @@ python prepare_gutenberg_chunks.py \
 Use the corresponding Qwen paths and label `qwen3` for the second model.
 Do not manually create `_SUCCESS.json`: it is written only after array shape,
 finite-value, metadata, model, rank, and world-size validation succeeds.
+
+After both models have been scored, generate the cross-language mean-spectrum
+figures without rerunning model inference or permutation tests:
+
+```bash
+python plot_gutenberg_language_spectra.py \
+  --input-root /nas/xy/gutenberg_surprisal/surprisal \
+  --output-dir /nas/xy/gutenberg_surprisal/figures/language_spectra \
+  --aggregate-only
+```
+
+The aggregation stage requires only NumPy and SciPy.  If the server does not
+provide Matplotlib, copy the two CSV files and summary JSON to a plotting
+machine and run `--plot-only` with the same `--output-dir`.
