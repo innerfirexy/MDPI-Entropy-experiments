@@ -259,6 +259,8 @@ def plot_language_facets(
 ) -> None:
     import matplotlib.pyplot as plt
 
+    display = (periods > 2.0) & (periods <= 2048.0)
+    display_periods = periods[display]
     fig, axes = plt.subplots(2, 5, figsize=(12.0, 5.6), sharex=True, sharey=True)
     for axis, language in zip(axes.flat, languages):
         counts = []
@@ -267,14 +269,20 @@ def plot_language_facets(
                 continue
             mean, se, documents = by_language[language]
             counts.append(documents)
-            axis.plot(periods, mean, color=MODEL_COLORS.get(model), linewidth=1.35,
+            mean = mean[display]
+            se = se[display]
+            axis.plot(display_periods, mean, color=MODEL_COLORS.get(model), linewidth=1.35,
                       label=MODEL_NAMES.get(model, model))
-            axis.fill_between(periods, np.maximum(mean - 1.96 * se, np.finfo(float).tiny),
+            axis.fill_between(display_periods,
+                              np.maximum(mean - 1.96 * se, np.finfo(float).tiny),
                               mean + 1.96 * se,
                               color=MODEL_COLORS.get(model), alpha=0.12, linewidth=0)
         axis.axhline(1.0, color="#777777", linewidth=0.7, linestyle="--", zorder=0)
         count_text = "/".join(f"{value:,}" for value in counts)
-        axis.set_title(f"{LANGUAGE_NAMES.get(language, language)}\n$n={count_text}$", fontsize=9.5)
+        axis.set_title(
+            f"{LANGUAGE_NAMES.get(language, language)}\n$n_{{L}}/n_{{Q}}={count_text}$",
+            fontsize=9.5,
+        )
         axis.set_xscale("log", base=2)
         axis.set_yscale("log")
         axis.grid(True, which="major", linewidth=0.35, alpha=0.3)
@@ -302,26 +310,32 @@ def plot_method_comparison(
 ) -> None:
     import matplotlib.pyplot as plt
 
+    exact_display = (exact_periods > 2.0) & (exact_periods <= 2048.0)
+    binned_display = (binned_periods > 2.0) & (binned_periods <= 2048.0)
+    shown_exact_periods = exact_periods[exact_display]
+    shown_binned_periods = binned_periods[binned_display]
     selected = [language for language in ("en", "zh") if language in exact]
     fig, axes = plt.subplots(1, len(selected), figsize=(10.0, 3.8), sharex=True, sharey=True)
     axes = np.atleast_1d(axes)
     for axis, language in zip(axes, selected):
         raw_mean, _, documents = exact[language]
         mean, _, _ = binned[language]
-        axis.plot(exact_periods, raw_mean, color="#999999", alpha=0.45,
+        raw_mean = raw_mean[exact_display]
+        mean = mean[binned_display]
+        axis.plot(shown_exact_periods, raw_mean, color="#999999", alpha=0.45,
                   linewidth=0.55, label="Exact-bin mean")
-        axis.plot(binned_periods, mean, color="#000000", linewidth=1.2,
+        axis.plot(shown_binned_periods, mean, color="#000000", linewidth=1.2,
                   marker="o", markersize=2.0, label="Log-period bins")
 
         window = min(15, len(mean) if len(mean) % 2 == 1 else len(mean) - 1)
         if window >= 5:
             smoothed = np.exp(savgol_filter(np.log(mean), window_length=window, polyorder=3))
-            axis.plot(binned_periods, smoothed, color="#009E73", linewidth=1.4,
+            axis.plot(shown_binned_periods, smoothed, color="#009E73", linewidth=1.4,
                       label="Savitzky--Golay")
 
-        x = np.log2(binned_periods)
+        x = np.log2(shown_binned_periods)
         spline = UnivariateSpline(x, np.log(mean), s=len(x) * 0.02)
-        axis.plot(binned_periods, np.exp(spline(x)), color="#CC79A7", linewidth=1.4,
+        axis.plot(shown_binned_periods, np.exp(spline(x)), color="#CC79A7", linewidth=1.4,
                   linestyle="--", label="Smoothing spline")
         axis.axhline(1.0, color="#777777", linewidth=0.7, linestyle=":")
         axis.set_xscale("log", base=2)

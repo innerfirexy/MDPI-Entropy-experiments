@@ -49,6 +49,8 @@ Results      results/gutenberg_benchmark
    fast log-period-bin summaries.  The latter is the recommended publication
    curve; a separate diagnostic compares it with Savitzky--Golay and smoothing
    spline alternatives without fitting a GAM to millions of raw observations.
+   Publication plots are restricted to the validated range
+   $2 < T \leq 2048$ and therefore omit the one-cycle and Nyquist bins.
 
 Each score rank writes one NPZ shard and one JSON summary.  Document IDs and
 all window alignment metadata are retained so runs can be audited or resumed.
