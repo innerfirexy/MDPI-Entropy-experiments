@@ -1,0 +1,51 @@
+{
+  "models": [
+    "llama31",
+    "qwen3"
+  ],
+  "languages": [
+    "en",
+    "fr",
+    "de",
+    "it",
+    "es",
+    "pt",
+    "fi",
+    "nl",
+    "hu",
+    "zh"
+  ],
+  "document_counts": {
+    "llama31": {
+      "en": 48313,
+      "fr": 3195,
+      "de": 1777,
+      "it": 875,
+      "es": 726,
+      "pt": 430,
+      "fi": 2738,
+      "nl": 849,
+      "hu": 488,
+      "zh": 332
+    },
+    "qwen3": {
+      "en": 48367,
+      "fr": 3194,
+      "de": 1772,
+      "it": 875,
+      "es": 726,
+      "pt": 431,
+      "fi": 2739,
+      "nl": 851,
+      "hu": 488,
+      "zh": 324
+    }
+  },
+  "window_length": 4096,
+  "exact_fourier_bins": 2048,
+  "requested_log_period_bins": 96,
+  "populated_log_period_bins": 76,
+  "relative_density_reference": 1.0,
+  "aggregation": "three windows averaged per document, then documents averaged per language",
+  "elapsed_seconds": 44.407082352787256
+}
